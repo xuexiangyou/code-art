@@ -8,6 +8,7 @@ import (
 )
 
 func main() {
+
 	digContainer := dig.New()
 
 	//初始化依赖加载
@@ -15,7 +16,7 @@ func main() {
 
 	//加载路由配置
 	err := digContainer.Invoke(func(r *gin.Engine) {
-		r.Run(":"+ "8080")
+		r.Run(":"+ "8089")
 	})
 
 	if err != nil {

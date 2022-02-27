@@ -3,9 +3,9 @@ package controllers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/services"
 	"net/http"
-	"strconv"
 )
 
 type TagController struct {
@@ -19,12 +19,14 @@ func NewTagController(tag *services.TagService) *TagController {
 }
 
 func (t *TagController) GetTag(c *gin.Context) {
-	tagId, err := strconv.ParseInt(c.Query("tag_id"), 10, 64)
+	var getTagParam forms.GetTag
+	err := c.ShouldBindQuery(&getTagParam)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, "invalid request")
+		c.JSON(http.StatusOK, gin.H{"msg": forms.Translate(err)})
 		return
 	}
-	ret, err := t.tagService.GetById(tagId)
+
+	ret, err := t.tagService.GetById(getTagParam.Id)
 	if err != nil {
 		fmt.Println("------", err)
 		c.JSON(http.StatusBadRequest, "get tag data invalid")
@@ -32,4 +34,16 @@ func (t *TagController) GetTag(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, ret)
+}
+
+func (t *TagController) UpdateTag(c *gin.Context) {
+	var updateTagParam forms.UpdateTag
+	//json 参数绑定
+	err := c.ShouldBindJSON(&updateTagParam)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{"msg": forms.Translate(err)})
+		return
+	}
+
+	c.JSON(http.StatusOK, updateTagParam)
 }
