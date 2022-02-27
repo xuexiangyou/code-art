@@ -16,11 +16,11 @@ func NewConfig() *Config {
 		Mysql: struct {
 			DataSource string
 		}{
-			DataSource: "whj:)OKM9ijn@tcp(rm-bp18h27wrt8mhty46o.mysql.rds.aliyuncs.com)/activity?charset=utf8mb4&parseTime=true",
+			DataSource: "",
 		},
 		Redis: struct {
 			Addr string
 			Pass string
-		}{Addr: "r-bp17bf1b1a9f3824pd.redis.rds.aliyuncs.com:6379", Pass: "Zhenzhen123"},
+		}{Addr: "", Pass: ""},
 	}
 }
