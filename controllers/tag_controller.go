@@ -6,6 +6,7 @@ import (
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/services"
 	"net/http"
+	"time"
 )
 
 type TagController struct {
@@ -19,6 +20,9 @@ func NewTagController(tag *services.TagService) *TagController {
 }
 
 func (t *TagController) GetTag(c *gin.Context) {
+
+	time.Sleep(3 * time.Second)
+
 	var getTagParam forms.GetTag
 	err := c.ShouldBindQuery(&getTagParam)
 	if err != nil {

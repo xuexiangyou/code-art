@@ -1,10 +1,15 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"github.com/gin-gonic/gin"
 	"github.com/xuexiangyou/code-art/infrastructure/container"
 	"go.uber.org/dig"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"time"
 )
 
 func main() {
@@ -14,13 +19,33 @@ func main() {
 	//初始化依赖加载
 	container.Init(digContainer)
 
-	//加载路由配置
-	err := digContainer.Invoke(func(r *gin.Engine) {
-		r.Run(":"+ "8089")
-	})
+	var srv *http.Server
 
-	if err != nil {
-		fmt.Println(err)
-		return
+	//启动服务并支持优雅关闭
+	go func() {
+		err := digContainer.Invoke(func(r *gin.Engine) {
+			srv = &http.Server{
+				Addr:    ":8080",
+				Handler: r,
+			}
+			// service connections
+			if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+				log.Fatalf("listen: %s\n", err)
+			}
+		})
+		if err != nil {
+			log.Fatalf("service start: %s\n", err)
+		}
+	}()
+
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+	log.Println("Shutdown Server ...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatal("Server Shutdown:", err)
 	}
 }

@@ -1,9 +1,9 @@
 package container
 
 import (
-	"github.com/xuexiangyou/code-art/config"
 	"github.com/xuexiangyou/code-art/controllers"
 	"github.com/xuexiangyou/code-art/domain/strategy"
+	"github.com/xuexiangyou/code-art/infrastructure/setting"
 	"github.com/xuexiangyou/code-art/infrastructure/stores"
 	"github.com/xuexiangyou/code-art/routers"
 	"github.com/xuexiangyou/code-art/services"
@@ -11,7 +11,7 @@ import (
 )
 
 func initConfig(container *dig.Container) {
-	container.Provide(config.NewConfig)
+	container.Provide(setting.NewConfig)
 }
 
 func initDb(container *dig.Container) {
