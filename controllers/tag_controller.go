@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/xuexiangyou/code-art/forms"
+	"github.com/xuexiangyou/code-art/middleware/log"
 	"github.com/xuexiangyou/code-art/services"
 	"net/http"
-	"time"
 )
 
 type TagController struct {
@@ -19,9 +19,23 @@ func NewTagController(tag *services.TagService) *TagController {
 	}
 }
 
+type TestData struct {
+	Name string `json:"name"`
+}
+
+func (t *TagController) TestTag(c *gin.Context) {
+	var testData *TestData
+
+	testData.Name = "1"
+
+	c.JSON(http.StatusOK, gin.H{"msg": "1111"})
+}
+
 func (t *TagController) GetTag(c *gin.Context) {
 
-	time.Sleep(3 * time.Second)
+	//打印info日志
+	log.AppLog.Info("hahahh")
+	log.AppLog.Error("哈哈哈哈哈")
 
 	var getTagParam forms.GetTag
 	err := c.ShouldBindQuery(&getTagParam)

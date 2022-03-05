@@ -1,4 +1,5 @@
 .idea
+/logs
 /config/dev
 /config/test
 /config/prod
