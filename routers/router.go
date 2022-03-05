@@ -13,16 +13,13 @@ import (
 
 type RouterParams struct {
 	dig.In
+	Logs *log.Logs
 	TagController *controllers.TagController
 }
-
 
 func InitRouter(p RouterParams) *gin.Engine {
 	//表单校验
 	forms.Init()
-
-	//初始化日志
-	log.SetUp()
 
 	r := gin.New()
 	//Recovery middleware recovers from any panics and writes a 500 if there was one.
@@ -48,7 +45,7 @@ func InitRouter(p RouterParams) *gin.Engine {
 	}))*/
 
 	//自定义日志中间件
-	r.Use(log.LoggerToFile())
+	r.Use(log.LoggerToFile(p.Logs))
 
 	//Registration verification
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {

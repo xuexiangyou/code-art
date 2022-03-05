@@ -4,35 +4,40 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
+	"github.com/xuexiangyou/code-art/config"
 	"os"
 	"time"
 )
 
-var AppLog *logrus.Logger
-var WebLog *logrus.Logger
 
-func SetUp() {
-	initAppLog()
-	initWebLog()
+type Logs struct {
+	AppLog *logrus.Logger
+	WebLog *logrus.Logger
 }
 
-func initAppLog() {
-	logFileName := "app.log"
-	AppLog = initLog(logFileName)
+func NewLogs(config *config.Config) *Logs {
+	appLog := initAppLog(config)
+	webLog := initWebLog(config)
+
+	return &Logs{
+		AppLog: appLog,
+		WebLog: webLog,
+	}
 }
 
-func initWebLog() {
-	logFileName := "web.log"
-	WebLog = initLog(logFileName)
+func initAppLog(config *config.Config) *logrus.Logger {
+	return initLog(config.Log.AppLogPath)
 }
 
-func initLog(logFileName string) *logrus.Logger {
+func initWebLog(config *config.Config) *logrus.Logger {
+	return initLog(config.Log.WebLogPath)
+}
+
+func initLog(logName string) *logrus.Logger {
 	log := logrus.New()
 	log.SetFormatter(&logrus.JSONFormatter{
 		TimestampFormat: "2006-01-02 15:04:05",
 	})
-	logPath := "logs/"
-	logName := logPath + logFileName
 	var f *os.File
 	var err error
 
@@ -55,7 +60,7 @@ func initLog(logFileName string) *logrus.Logger {
 
 
 //LoggerToFile Log to file
-func LoggerToFile() gin.HandlerFunc {
+func LoggerToFile(log *Logs) gin.HandlerFunc {
 
 	/*//logFilePath := config.Log_FILE_PATH
 	//logFileName := config.LOG_FILE_NAME
@@ -118,7 +123,7 @@ func LoggerToFile() gin.HandlerFunc {
 			reqUri,
 		)*/
 
-		WebLog.WithFields(logrus.Fields{
+		log.WebLog.WithFields(logrus.Fields{
 			"status_code":  statusCode,
 			"latency_time": latencyTime,
 			"client_ip":    clientIP,

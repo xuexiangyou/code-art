@@ -1,10 +1,12 @@
 package container
 
 import (
+	"fmt"
 	"github.com/xuexiangyou/code-art/controllers"
 	"github.com/xuexiangyou/code-art/domain/strategy"
 	"github.com/xuexiangyou/code-art/infrastructure/setting"
 	"github.com/xuexiangyou/code-art/infrastructure/stores"
+	"github.com/xuexiangyou/code-art/middleware/log"
 	"github.com/xuexiangyou/code-art/routers"
 	"github.com/xuexiangyou/code-art/services"
 	"go.uber.org/dig"
@@ -12,6 +14,10 @@ import (
 
 func initConfig(container *dig.Container) {
 	container.Provide(setting.NewConfig)
+}
+
+func initLogs(container *dig.Container) {
+	container.Provide(log.NewLogs)
 }
 
 func initDb(container *dig.Container) {
@@ -31,7 +37,8 @@ func initService(container *dig.Container) {
 }
 
 func initController(container *dig.Container) {
-	container.Provide(controllers.NewTagController)
+	err := container.Provide(controllers.NewTagController)
+	fmt.Println("??????", err)
 }
 
 func initRouter(container *dig.Container) {
@@ -40,6 +47,7 @@ func initRouter(container *dig.Container) {
 
 func Init(c *dig.Container) {
 	initConfig(c)
+	initLogs(c)
 	initDb(c)
 	initRedis(c)
 	initStrategy(c)

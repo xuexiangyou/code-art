@@ -9,13 +9,16 @@ import (
 	"net/http"
 )
 
+
 type TagController struct {
+	logs *log.Logs
 	tagService *services.TagService
 }
 
-func NewTagController(tag *services.TagService) *TagController {
+func NewTagController(logs *log.Logs, tag *services.TagService) *TagController {
 	return &TagController{
 		tagService: tag,
+		logs: logs,
 	}
 }
 
@@ -34,8 +37,8 @@ func (t *TagController) TestTag(c *gin.Context) {
 func (t *TagController) GetTag(c *gin.Context) {
 
 	//打印info日志
-	log.AppLog.Info("hahahh")
-	log.AppLog.Error("哈哈哈哈哈")
+	t.logs.AppLog.Info("hahahh")
+	t.logs.AppLog.Error("哈哈哈哈哈")
 
 	var getTagParam forms.GetTag
 	err := c.ShouldBindQuery(&getTagParam)
