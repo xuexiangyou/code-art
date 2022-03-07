@@ -8,13 +8,14 @@ import (
 	"github.com/xuexiangyou/code-art/controllers"
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/middleware/log"
-	"go.uber.org/dig"
+	"go.uber.org/fx"
 )
 
 type RouterParams struct {
-	dig.In
-	Logs *log.Logs
-	TagController *controllers.TagController
+	fx.In
+	Logs              *log.Logs
+	TagController     *controllers.TagController
+	ArticleController *controllers.ArticleController
 }
 
 func InitRouter(p RouterParams) *gin.Engine {
@@ -59,10 +60,13 @@ func InitRouter(p RouterParams) *gin.Engine {
 		}
 	}
 
+	//tag 相关接口定义
 	r.GET("/get-tag", p.TagController.GetTag)
 	r.POST("/update-tag", p.TagController.UpdateTag)
 	r.GET("/test-tag", p.TagController.TestTag)
 
+	//article 相关接口定义
+	r.GET("/get-article", p.ArticleController.GetArticle)
+
 	return r
 }
-

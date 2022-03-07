@@ -2,19 +2,33 @@ package main
 
 import (
 	"context"
-	"github.com/gin-gonic/gin"
 	"github.com/xuexiangyou/code-art/infrastructure/container"
-	"go.uber.org/dig"
 	"log"
-	"net/http"
 	"os"
 	"os/signal"
 	"time"
 )
 
 func main() {
+	//容器初始化、并加载相关对象
+	app := container.NewApp()
+	startCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	if err := app.Start(startCtx); err != nil {
+		log.Fatal(err)
+	}
 
-	digContainer := dig.New()
+	quit := make(chan os.Signal)
+	signal.Notify(quit, os.Interrupt)
+	<-quit
+
+	stopCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+	if err := app.Stop(stopCtx); err != nil {
+		log.Fatal(err)
+	}
+
+	/*digContainer := dig.New()
 
 	//初始化依赖加载
 	container.Init(digContainer)
@@ -47,5 +61,5 @@ func main() {
 	defer cancel()
 	if err := srv.Shutdown(ctx); err != nil {
 		log.Fatal("Server Shutdown:", err)
-	}
+	}*/
 }

@@ -4,21 +4,27 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/xuexiangyou/code-art/forms"
-	"github.com/xuexiangyou/code-art/middleware/log"
 	"github.com/xuexiangyou/code-art/services"
 	"net/http"
+	"time"
 )
 
+type TagCtlParam struct {
+	BaseCtlParams
+	TagService *services.TagService
+}
 
 type TagController struct {
-	logs *log.Logs
+	BaseController
 	tagService *services.TagService
 }
 
-func NewTagController(logs *log.Logs, tag *services.TagService) *TagController {
-	return &TagController{
-		tagService: tag,
-		logs: logs,
+func NewTagController(t TagCtlParam) *TagController {
+	return &TagController {
+		tagService: t.TagService,
+		BaseController: BaseController {
+			logs:t.Logs,
+		},
 	}
 }
 
@@ -35,6 +41,8 @@ func (t *TagController) TestTag(c *gin.Context) {
 }
 
 func (t *TagController) GetTag(c *gin.Context) {
+
+	time.Sleep(5 * time.Second)
 
 	//打印info日志
 	t.logs.AppLog.Info("hahahh")
