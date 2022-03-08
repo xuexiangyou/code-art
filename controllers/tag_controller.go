@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/xuexiangyou/code-art/common"
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/services"
 	"net/http"
@@ -33,11 +34,8 @@ type TestData struct {
 }
 
 func (t *TagController) TestTag(c *gin.Context) {
-	var testData *TestData
-
-	testData.Name = "1"
-
-	c.JSON(http.StatusOK, gin.H{"msg": "1111"})
+	appG := common.Gin{C: c}
+	appG.Response(http.StatusOK, common.SUCCESS, "1111")
 }
 
 func (t *TagController) GetTag(c *gin.Context) {
