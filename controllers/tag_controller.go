@@ -35,7 +35,7 @@ type TestData struct {
 
 func (t *TagController) TestTag(c *gin.Context) {
 	appG := common.Gin{C: c}
-	appG.Response(http.StatusOK, common.SUCCESS, "1111")
+	appG.Response(http.StatusOK, common.SUCCESS, "222")
 }
 
 func (t *TagController) GetTag(c *gin.Context) {

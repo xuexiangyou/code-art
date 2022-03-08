@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/xuexiangyou/code-art/config"
 	"github.com/xuexiangyou/code-art/controllers"
 	"github.com/xuexiangyou/code-art/domain/strategy"
 	"github.com/xuexiangyou/code-art/infrastructure/setting"
@@ -52,9 +53,9 @@ func fxProvideRouter() fx.Option {
 
 //fxRegister 启动服务
 func fxRegister() fx.Option {
-	return fx.Invoke(func(lc fx.Lifecycle, r *gin.Engine) {
+	return fx.Invoke(func(lc fx.Lifecycle, config *config.Config, r *gin.Engine) {
 		srv := &http.Server{
-			Addr:    ":8080",
+			Addr:    fmt.Sprintf("%s:%d", config.Host, config.Port),
 			Handler: r,
 		}
 

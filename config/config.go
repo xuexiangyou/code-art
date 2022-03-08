@@ -1,7 +1,9 @@
 package config
 
-//定义配置变量
+//Config 定义配置变量
 type Config struct {
+	Host     string
+	Port     int
 	Log struct {
 		WebLogPath string
 		AppLogPath string
