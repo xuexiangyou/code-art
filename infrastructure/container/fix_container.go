@@ -61,6 +61,8 @@ func fxRegister() fx.Option {
 
 		lc.Append(fx.Hook{
 			OnStart: func(ctx context.Context) error {
+				fmt.Println("server start")
+
 				go srv.ListenAndServe()
 				return nil
 			},
