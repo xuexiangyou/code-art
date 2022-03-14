@@ -33,11 +33,17 @@ func fxProvideRedis() fx.Option {
 }
 
 func fxProvideStrategy() fx.Option {
-	return fx.Provide(strategy.NewTagStrategy)
+	return fx.Provide(
+		strategy.NewTagStrategy,
+		strategy.NewArticleStrategy,
+	)
 }
 
 func fxProvideService() fx.Option {
-	return fx.Provide(services.NewTagService)
+	return fx.Provide(
+		services.NewTagService,
+		services.NewArticleService,
+	)
 }
 
 func fxProvideController() fx.Option {
@@ -62,14 +68,11 @@ func fxRegister() fx.Option {
 		lc.Append(fx.Hook{
 			OnStart: func(ctx context.Context) error {
 				fmt.Println("server start")
-
 				go srv.ListenAndServe()
 				return nil
 			},
 			OnStop: func(ctx context.Context) error {
-
 				fmt.Println("server closing")
-
 				return srv.Shutdown(ctx)
 			},
 		})
@@ -86,7 +89,7 @@ func NewApp() *fx.App {
 		fxProvideService(),    //服务文件
 		fxProvideController(), //控制器文件
 		fxProvideRouter(),     //路由文件
-		fxRegister(), 		   //http 服务启动
+		fxRegister(),          //http 服务启动
 	)
 
 	return app

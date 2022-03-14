@@ -5,7 +5,6 @@ import (
 	"github.com/go-redis/redis/v8"
 	"github.com/xuexiangyou/code-art/domain/cache"
 	"github.com/xuexiangyou/code-art/domain/entity"
-	"github.com/xuexiangyou/code-art/domain/repository"
 	"github.com/xuexiangyou/code-art/domain/storage"
 	"gorm.io/gorm"
 )
@@ -15,11 +14,24 @@ type TagStrategy struct {
 	cache *redis.Client
 }
 
+type TagRepository interface {
+	GetTag(int64) (*entity.Tag, error)
+	ListByIds([]int64) ([]*entity.Tag, error)
+	CreateTag(*entity.Tag) (*entity.Tag, error)
+	WithTrx(db *gorm.DB) *TagStrategy
+}
+
 func NewTagStrategy(db *gorm.DB, cache *redis.Client) *TagStrategy {
 	return &TagStrategy{db, cache}
 }
 
-var _ repository.TagRepository = &TagStrategy{}
+var _ TagRepository = &TagStrategy{}
+
+//WithTrx 不能添加为指针的格式
+func (t TagStrategy) WithTrx(db *gorm.DB) *TagStrategy {
+	t.db = db
+	return &t
+}
 
 //getTagCache 获取tag缓存对象
 func (t *TagStrategy) getTagCache() *cache.TagCache {
@@ -54,6 +66,11 @@ func (t *TagStrategy) GetTag(id int64) (*entity.Tag, error) {
 		}
 		return &ret, err
 	}
+}
+
+//CreateTag 创建tag表记录
+func (t *TagStrategy) CreateTag(tag *entity.Tag) (*entity.Tag, error) {
+	return t.getTagModel().CreateTag(tag)
 }
 
 //ListByIds 根据ids数组获取tag列表

@@ -8,7 +8,9 @@ import (
 	"github.com/xuexiangyou/code-art/controllers"
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/middleware/log"
+	"github.com/xuexiangyou/code-art/middleware/transaction"
 	"go.uber.org/fx"
+	"gorm.io/gorm"
 )
 
 type RouterParams struct {
@@ -16,6 +18,7 @@ type RouterParams struct {
 	Logs              *log.Logs
 	TagController     *controllers.TagController
 	ArticleController *controllers.ArticleController
+	Db                *gorm.DB
 }
 
 func InitRouter(p RouterParams) *gin.Engine {
@@ -64,9 +67,11 @@ func InitRouter(p RouterParams) *gin.Engine {
 	r.GET("/get-tag", p.TagController.GetTag)
 	r.POST("/update-tag", p.TagController.UpdateTag)
 	r.GET("/test-tag", p.TagController.TestTag)
+	r.POST("/create-tag", p.TagController.CreateTag)
 
 	//article 相关接口定义
 	r.GET("/get-article", p.ArticleController.GetArticle)
+	r.POST("/create-article", transaction.DBTransactionMiddleware(p.Db), p.ArticleController.CreateArticle)
 
 	return r
 }

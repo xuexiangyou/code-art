@@ -7,7 +7,11 @@ type GetTag struct {
 
 //UpdateTag 更新tag参数
 type UpdateTag struct {
-	Id   		int64  `form:"id" binding:"required"`
-	Name 		string `json:"name" binding:"required,checkName"`
-	CreateTime 	string	`json:"create_time" binding:"required,timing"`
+	Id         int64  `form:"id" binding:"required"`
+	Name       string `json:"name" binding:"required,checkName"`
+	CreateTime string `json:"create_time" binding:"required,timing"`
+}
+
+type CreateTag struct {
+	Name string `json:"name" binding:"required"`
 }

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/xuexiangyou/code-art/common"
+	"github.com/xuexiangyou/code-art/domain/entity"
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/services"
 	"net/http"
@@ -73,4 +74,25 @@ func (t *TagController) UpdateTag(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, updateTagParam)
+}
+
+func (t *TagController) CreateTag(c *gin.Context) {
+	appG := common.Gin{C: c}
+	var createTagParam forms.CreateTag
+	//json 参数绑定
+	err := c.ShouldBindJSON(&createTagParam)
+	if err != nil {
+		appG.Response(http.StatusOK, common.INVALID_PARAMS, err.Error())
+		return
+	}
+
+	tagData := &entity.Tag{
+		Name: createTagParam.Name,
+	}
+	tagRet, err := t.tagService.CreateTag(tagData)
+	if err != nil {
+		appG.Response(http.StatusOK, common.INVALID_PARAMS, err.Error())
+		return
+	}
+	appG.Response(http.StatusOK, common.SUCCESS, tagRet)
 }

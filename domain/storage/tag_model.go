@@ -27,3 +27,11 @@ func (t *TagModel) ListById([]int64) ([]*entity.Tag, error) {
 	return nil, nil
 }
 
+func (t *TagModel) CreateTag(tag *entity.Tag) (*entity.Tag, error) {
+	err := t.db.Table(t.TableName()).Create(tag).Error
+	if err != nil {
+		return nil, err
+	}
+	return tag, err
+}
+
