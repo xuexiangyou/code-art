@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/xuexiangyou/code-art/common"
 	"github.com/xuexiangyou/code-art/domain/entity"
@@ -61,8 +60,6 @@ func (t *ArticleController) CreateArticle(c *gin.Context) {
 		return
 	}
 
-	fmt.Println("tag_ret---", tagRet)
-
 	//插入文章数据
 	articleData := &entity.Article{
 		TagId: tagRet.Id,
@@ -73,7 +70,6 @@ func (t *ArticleController) CreateArticle(c *gin.Context) {
 		t.logs.AppLog.Error("插入tag数据失败", err)
 		appG.Response(http.StatusInternalServerError, common.INVALID_PARAMS, nil)
 	}
-	fmt.Println("article_ret---", articleRet)
 
-	appG.Response(http.StatusOK, common.SUCCESS, "ok")
+	appG.Response(http.StatusOK, common.SUCCESS, articleRet)
 }
