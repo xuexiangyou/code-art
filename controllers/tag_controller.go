@@ -35,8 +35,7 @@ type TestData struct {
 }
 
 func (t *TagController) TestTag(c *gin.Context) {
-	appG := common.Gin{C: c}
-	appG.Response(http.StatusOK, common.SUCCESS, "222")
+	common.WrapContext(c).Success("222")
 }
 
 func (t *TagController) GetTag(c *gin.Context) {
@@ -77,12 +76,11 @@ func (t *TagController) UpdateTag(c *gin.Context) {
 }
 
 func (t *TagController) CreateTag(c *gin.Context) {
-	appG := common.Gin{C: c}
 	var createTagParam forms.CreateTag
 	//json 参数绑定
 	err := c.ShouldBindJSON(&createTagParam)
 	if err != nil {
-		appG.Response(http.StatusOK, common.INVALID_PARAMS, err.Error())
+		common.WrapContext(c).Error(http.StatusInternalServerError, common.INVALID_PARAMS)
 		return
 	}
 
@@ -91,8 +89,8 @@ func (t *TagController) CreateTag(c *gin.Context) {
 	}
 	tagRet, err := t.tagService.CreateTag(tagData)
 	if err != nil {
-		appG.Response(http.StatusOK, common.INVALID_PARAMS, err.Error())
+		common.WrapContext(c).Error(http.StatusInternalServerError, common.INVALID_PARAMS)
 		return
 	}
-	appG.Response(http.StatusOK, common.SUCCESS, tagRet)
+	common.WrapContext(c).Success(tagRet)
 }

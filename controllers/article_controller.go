@@ -37,7 +37,7 @@ func (t *ArticleController) GetArticle(c *gin.Context) {
 }
 
 func (t *ArticleController) CreateArticle(c *gin.Context) {
-	appG := common.Gin{C: c}
+	//appG := common.Gin{C: c}
 
 	var createArticleParam forms.CreateArticle
 	err := c.ShouldBind(&createArticleParam)
@@ -56,7 +56,7 @@ func (t *ArticleController) CreateArticle(c *gin.Context) {
 	tagRet, err := t.tagService.WithTrx(txHandle).CreateTag(tagData)
 	if err != nil {
 		t.logs.AppLog.Error("插入tag数据失败", err)
-		appG.Response(http.StatusInternalServerError, common.INVALID_PARAMS, nil)
+		common.WrapContext(c).Error(http.StatusInternalServerError, common.INVALID_PARAMS)
 		return
 	}
 
@@ -68,8 +68,8 @@ func (t *ArticleController) CreateArticle(c *gin.Context) {
 	articleRet, err := t.articleService.WithThr(txHandle).CreateArticle(articleData)
 	if err != nil {
 		t.logs.AppLog.Error("插入tag数据失败", err)
-		appG.Response(http.StatusInternalServerError, common.INVALID_PARAMS, nil)
+		common.WrapContext(c).Error(http.StatusInternalServerError, common.INVALID_PARAMS)
 	}
 
-	appG.Response(http.StatusOK, common.SUCCESS, articleRet)
+	common.WrapContext(c).Success(articleRet)
 }
