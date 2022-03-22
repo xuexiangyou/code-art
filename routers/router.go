@@ -49,7 +49,10 @@ func InitRouter(p RouterParams) *gin.Engine {
 	}))*/
 
 	//自定义日志中间件
-	r.Use(log.LoggerToFile(p.Logs))
+	//r.Use(log.LoggerToFile(p.Logs))
+
+	//定义日志transaction中间件
+	r.Use(log.JsonLogMiddleware())
 
 	//Registration verification
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {

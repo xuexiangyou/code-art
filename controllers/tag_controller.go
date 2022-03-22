@@ -3,6 +3,7 @@ package controllers
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/sirupsen/logrus"
 	"github.com/xuexiangyou/code-art/common"
 	"github.com/xuexiangyou/code-art/domain/entity"
 	"github.com/xuexiangyou/code-art/forms"
@@ -35,11 +36,15 @@ type TestData struct {
 }
 
 func (t *TagController) TestTag(c *gin.Context) {
+	log := c.MustGet("logger").(*logrus.Entry)
+	log.Info("HAHAHAHHAHAHAHAH")
+
 	common.WrapContext(c).Success("222")
 }
 
 func (t *TagController) GetTag(c *gin.Context) {
-
+	log := c.MustGet("logger").(*logrus.Entry)
+	log.Info("eeeeeeee")
 	time.Sleep(5 * time.Second)
 
 	//打印info日志
