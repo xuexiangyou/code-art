@@ -5,8 +5,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/xuexiangyou/code-art/config"
 	"github.com/xuexiangyou/code-art/controllers"
 	"github.com/xuexiangyou/code-art/forms"
+	"github.com/xuexiangyou/code-art/middleware/cors"
 	"github.com/xuexiangyou/code-art/middleware/log"
 	"github.com/xuexiangyou/code-art/middleware/transaction"
 	"go.uber.org/fx"
@@ -19,11 +21,27 @@ type RouterParams struct {
 	TagController     *controllers.TagController
 	ArticleController *controllers.ArticleController
 	Db                *gorm.DB
+	Config 			  *config.Config
+}
+
+//设置gin框架的模式
+func setGinMode(c *config.Config) {
+	switch c.Env {
+	case "dev":
+		gin.SetMode(gin.DebugMode)
+	case "test":
+		gin.SetMode(gin.TestMode)
+	case "prd":
+		gin.SetMode(gin.ReleaseMode)
+	}
 }
 
 func InitRouter(p RouterParams) *gin.Engine {
 	//表单校验
 	forms.Init()
+
+	//设置模式
+	setGinMode(p.Config)
 
 	r := gin.New()
 	//Recovery middleware recovers from any panics and writes a 500 if there was one.
@@ -53,6 +71,9 @@ func InitRouter(p RouterParams) *gin.Engine {
 
 	//定义日志transaction中间件
 	r.Use(log.JsonLogMiddleware())
+
+	//cors
+	r.Use(cors.CORS(cors.CORSOptions{}))
 
 	//Registration verification
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {
