@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
+	"github.com/xuexiangyou/code-art/common"
 	"github.com/xuexiangyou/code-art/config"
 	"github.com/xuexiangyou/code-art/controllers"
 	"github.com/xuexiangyou/code-art/forms"
@@ -27,11 +28,11 @@ type RouterParams struct {
 //设置gin框架的模式
 func setGinMode(c *config.Config) {
 	switch c.Env {
-	case "dev":
+	case common.AppEnvDev:
 		gin.SetMode(gin.DebugMode)
-	case "test":
+	case common.AppEnvTest:
 		gin.SetMode(gin.TestMode)
-	case "prd":
+	case common.AppEnvPrd:
 		gin.SetMode(gin.ReleaseMode)
 	}
 }
