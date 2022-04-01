@@ -1,7 +1,10 @@
 package common
 
 import (
+	"compress/gzip"
 	"github.com/gin-gonic/gin"
+	"io"
+	"os"
 	"strings"
 )
 
@@ -25,4 +28,30 @@ func GetClientIP(c *gin.Context) string {
 	}
 
 	return requester
+}
+
+// GzipDoCompress gzip 文件解压
+/**
+ *src压缩包路径
+ * dst解压后的路径
+*/
+func GzipDoCompress(src, dst string) error {
+	gzipFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	gzipReader, err := gzip.NewReader(gzipFile)
+	if err == io.EOF {
+		return nil
+	}
+	defer gzipReader.Close()
+
+	outfileWriter, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer outfileWriter.Close()
+
+	_, err = io.Copy(outfileWriter, gzipReader)
+	return err
 }
