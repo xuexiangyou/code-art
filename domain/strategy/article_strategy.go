@@ -1,41 +1,26 @@
 package strategy
 
 import (
-	"github.com/go-redis/redis/v8"
 	"github.com/xuexiangyou/code-art/domain/entity"
-	"github.com/xuexiangyou/code-art/domain/storage"
-	"gorm.io/gorm"
+	"github.com/xuexiangyou/code-art/interfaces"
 )
 
 type ArticleStrategy struct {
-	db    *gorm.DB
-	cache *redis.Client
+	articleRepo interfaces.ArticleRepo
 }
 
-type ArticleRepository interface {
-	CreateArticle(*entity.Article) (*entity.Article, error)
-	WithTrx(db *gorm.DB) *ArticleStrategy
-}
-
-var _ ArticleRepository = &ArticleStrategy{}
-
-func NewArticleStrategy(db *gorm.DB, cache *redis.Client) *ArticleStrategy {
-	return &ArticleStrategy{db, cache}
-}
-
-//WithTrx 设置事物数据库链接
-func (a ArticleStrategy) WithTrx(db *gorm.DB) *ArticleStrategy {
-	a.db = db
-	return &a
-}
-
-//getArticleModel 获取tag数据库对象
-func (a *ArticleStrategy) getArticleModel() *storage.ArticleModel {
-	return storage.NewArticleModel(a.db)
+func NewArticleStrategy(articleRepo interfaces.ArticleRepo) ArticleStrategy {
+	return ArticleStrategy{
+		articleRepo: articleRepo,
+	}
 }
 
 //CreateArticle 创建文章
-func (a *ArticleStrategy) CreateArticle(article *entity.Article) (*entity.Article, error) {
-	return a.getArticleModel().CreateArticle(article)
+func (a ArticleStrategy) CreateArticle(article *entity.Article) (*entity.Article, error) {
+	return a.articleRepo.CreateArticle(article)
+}
+
+func (a ArticleStrategy) UpdateTitleById(id int64, title string) error {
+	return a.articleRepo.UpdateTitleById(id, title)
 }
 

@@ -58,9 +58,9 @@ func (wrapper *Wrapper) Success( data interface{}) {
 }
 
 // Error 错误输出
-func (wrapper *Wrapper) Error(httpCode int, statusCode int) {
+func (wrapper *Wrapper) Error(httpCode int, statusCode int, err ...interface{}) {
 	response := NewResponse()
 	response.Code = statusCode
-	response.Msg = GetMsg(statusCode)
+	response.Msg = GetMsg(statusCode, err...)
 	wrapper.Json(httpCode, response)
 }

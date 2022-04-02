@@ -1,4 +1,4 @@
-package transaction
+package middleware
 
 import (
 	"github.com/gin-gonic/gin"

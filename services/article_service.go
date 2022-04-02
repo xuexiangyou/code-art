@@ -2,27 +2,43 @@ package services
 
 import (
 	"github.com/xuexiangyou/code-art/domain/entity"
-	"github.com/xuexiangyou/code-art/domain/strategy"
-	"gorm.io/gorm"
+	"github.com/xuexiangyou/code-art/forms"
+	"github.com/xuexiangyou/code-art/interfaces"
 )
 
 type ArticleService struct {
-	article *strategy.ArticleStrategy
+	article interfaces.ArticleStrategy
+	tag     interfaces.TagStrategy
 }
 
-func NewArticleService(article *strategy.ArticleStrategy) *ArticleService {
-	return &ArticleService{article}
+func NewArticleService(article interfaces.ArticleStrategy, tag interfaces.TagStrategy) ArticleService {
+	return ArticleService{
+		article: article,
+		tag: tag,
+	}
 }
 
-func (a ArticleService) WithThr(db *gorm.DB) *ArticleService {
-	a.article = a.article.WithTrx(db)
-	return &a
-}
-
-func (a *ArticleService) CreateArticle(article *entity.Article) (*entity.Article, error) {
-	ret, err := a.article.CreateArticle(article)
+func (a *ArticleService) CreateArticle(createArticleParam forms.CreateArticle) (*entity.Article, error) {
+	tagData := &entity.Tag{
+		Name: createArticleParam.Name,
+	}
+	tagRet, err := a.tag.CreateTag(tagData)
 	if err != nil {
 		return nil, err
 	}
-	return ret, nil
+
+	articleData := &entity.Article{
+		TagId: tagRet.Id,
+		Title: createArticleParam.Title,
+	}
+	articleRet, err := a.article.CreateArticle(articleData)
+	if err != nil {
+		return nil, err
+	}
+	return articleRet, nil
+}
+
+func (a *ArticleService) UpdateArticle(updateArticleParam forms.UpdateArticle) error {
+	err := a.article.UpdateTitleById(updateArticleParam.Id, updateArticleParam.Title)
+	return err
 }

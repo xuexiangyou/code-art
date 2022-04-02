@@ -1,7 +1,6 @@
 package forms
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/locales/zh"
 	ut "github.com/go-playground/universal-translator"
@@ -99,8 +98,6 @@ func Timing(fl validator.FieldLevel) bool {
 }
 
 func CheckName(fl validator.FieldLevel) bool {
-	fmt.Println("----ggggg")
-
 	val := fl.Field().String()
 	if val != "llg" {
 		return false

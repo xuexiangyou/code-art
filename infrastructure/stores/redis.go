@@ -2,7 +2,6 @@ package stores
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/xuexiangyou/code-art/config"
 	"go.uber.org/fx"
@@ -17,11 +16,9 @@ func ConnectRedis(lc fx.Lifecycle, config *config.Config) *redis.Client {
 
 	lc.Append(fx.Hook{
 		OnStart: func(ctx context.Context) error {
-			fmt.Println("redis----start")
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
-			fmt.Println("redis----stop")
 			rdb.Close()
 			return nil
 		},
