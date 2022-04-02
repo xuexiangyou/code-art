@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/xuexiangyou/code-art/config"
-	"github.com/xuexiangyou/code-art/controllers"
 	"github.com/xuexiangyou/code-art/infrastructure/setting"
 	"github.com/xuexiangyou/code-art/infrastructure/stores"
 	"github.com/xuexiangyou/code-art/routers"
@@ -25,12 +24,12 @@ func fxProvideRedis() fx.Option {
 	return fx.Provide(stores.ConnectRedis)
 }
 
-func fxProvideController() fx.Option {
+/*func fxProvideController() fx.Option {
 	return fx.Provide(
-		controllers.NewTagController,
-		controllers.NewArticleController,
+		v1.NewTagController,
+		v1.NewArticleController,
 	)
-}
+}*/
 
 func fxProvideRouter() fx.Option {
 	return fx.Provide(routers.InitRouter)
@@ -61,7 +60,7 @@ func NewApp() *fx.App {
 		fxProvideConfig(),     //配置文件
 		fxProvideDb(),         //数据库文件
 		fxProvideRedis(),      //redis文件
-		fxProvideController(), //控制器文件
+		//fxProvideController(), //控制器文件
 		fxProvideRouter(),     //路由文件
 		fxRegister(),          //http 服务启动
 	)

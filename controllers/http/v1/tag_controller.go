@@ -1,4 +1,4 @@
-package controllers
+package v1
 
 import (
 	"github.com/gin-gonic/gin"
@@ -20,9 +20,20 @@ type TagController struct {
 
 var _ interfaces.TagController = TagController{}
 
-func NewTagController(t TagCtlParam) TagController {
-	return TagController {
-		BaseController: NewBaseController(t.Db, t.Redis),
+func newTagRoutes(handler *gin.RouterGroup, f common.FxCommonParams) {
+	r := newTagController(f)
+	h := handler.Group("/tag")
+	{
+		h.GET("/get", r.GetTag)
+		h.GET("/test", r.TestTag)
+		h.POST("/create", r.CreateTag)
+		h.POST("/update", r.UpdateTag)
+	}
+}
+
+func newTagController(f common.FxCommonParams) TagController {
+	return TagController{
+		BaseController: NewBaseController(f.Db, f.Redis),
 	}
 }
 

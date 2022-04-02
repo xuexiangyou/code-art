@@ -1,17 +1,18 @@
-package controllers
+package v1
 
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/xuexiangyou/code-art/common"
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/interfaces"
+	"github.com/xuexiangyou/code-art/middleware"
 	"gorm.io/gorm"
 	"net/http"
 )
 
-type ArticleCtlParam struct {
+/*type ArticleCtlParam struct {
 	BaseCtlParams
-}
+}*/
 
 type ArticleController struct {
 	BaseController
@@ -19,9 +20,19 @@ type ArticleController struct {
 
 var _ interfaces.ArticleController = ArticleController{}
 
-func NewArticleController(t ArticleCtlParam) ArticleController {
+func newArticleRoutes(handler *gin.RouterGroup, f common.FxCommonParams) {
+	r := newArticleController(f)
+	h := handler.Group("/article")
+	{
+		h.GET("/get", r.GetArticle)
+		h.POST("/create", middleware.DBTransactionMiddleware(f.Db), r.CreateArticle)
+		h.POST("/update", r.UpdateArticle)
+	}
+}
+
+func newArticleController(f common.FxCommonParams) ArticleController {
 	return ArticleController{
-		BaseController: NewBaseController(t.Db, t.Redis),
+		BaseController: NewBaseController(f.Db, f.Redis),
 	}
 }
 
@@ -42,7 +53,7 @@ func (t ArticleController) CreateArticle(c *gin.Context) {
 	articleService := t.WithTrxDb(txHandle).newArticleService()
 	articleRet, err := articleService.CreateArticle(createArticleParam)
 	if err != nil {
-		common.WrapContext(c).Error(http.StatusInternalServerError, common.INVALID_PARAMS)
+		common.WrapContext(c).Error(http.StatusInternalServerError, common.INVALID_PARAMS, err.Error())
 		return
 	}
 

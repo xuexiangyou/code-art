@@ -6,21 +6,11 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/xuexiangyou/code-art/common"
 	"github.com/xuexiangyou/code-art/config"
-	"github.com/xuexiangyou/code-art/controllers"
+	v1 "github.com/xuexiangyou/code-art/controllers/http/v1"
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/middleware"
-	"go.uber.org/fx"
-	"gorm.io/gorm"
 	"log"
 )
-
-type RouterParams struct {
-	fx.In
-	Db                *gorm.DB
-	Config            *config.Config
-	TagController     controllers.TagController
-	ArticleController controllers.ArticleController
-}
 
 //设置gin框架的模式
 func setGinMode(c *config.Config) {
@@ -34,7 +24,7 @@ func setGinMode(c *config.Config) {
 	}
 }
 
-func InitRouter(p RouterParams) *gin.Engine {
+func InitRouter(p common.FxCommonParams) *gin.Engine {
 	//表单校验
 	forms.Init()
 
@@ -65,7 +55,10 @@ func InitRouter(p RouterParams) *gin.Engine {
 		}
 	}
 
-	//tag 相关接口定义
+	//设置v1版本的接口路由
+	v1.NewRouter(r, p)
+
+	/*//tag 相关接口定义
 	r.GET("/get-tag", p.TagController.GetTag)
 	r.POST("/update-tag", p.TagController.UpdateTag)
 	r.GET("/test-tag", p.TagController.TestTag)
@@ -74,7 +67,7 @@ func InitRouter(p RouterParams) *gin.Engine {
 	//article 相关接口定义
 	r.GET("/get-article", p.ArticleController.GetArticle)
 	r.POST("/create-article", middleware.DBTransactionMiddleware(p.Db), p.ArticleController.CreateArticle)
-	r.POST("/update-article", p.ArticleController.UpdateArticle)
+	r.POST("/update-article", p.ArticleController.UpdateArticle)*/
 
 	return r
 }
