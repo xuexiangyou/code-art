@@ -1,6 +1,7 @@
 package routers
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
 	"github.com/go-playground/validator/v10"
@@ -10,6 +11,7 @@ import (
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/middleware"
 	"log"
+	"time"
 )
 
 //设置gin框架的模式
@@ -37,6 +39,22 @@ func InitRouter(p common.FxCommonParams) *gin.Engine {
 	//Recovery middleware recovers from any panics and writes a 500 if there was one.
 	r.Use(gin.Recovery())
 
+	//设置接口请求日志
+	r.Use(gin.LoggerWithFormatter(func(param gin.LogFormatterParams) string {
+		// your custom format
+		return fmt.Sprintf("%s - [%s] \"%s %s %s %d %s \"%s\" %s\"\n",
+			param.ClientIP,
+			param.TimeStamp.Format(time.RFC1123),
+			param.Method,
+			param.Path,
+			param.Request.Proto,
+			param.StatusCode,
+			param.Latency,
+			param.Request.UserAgent(),
+			param.ErrorMessage,
+		)
+	}))
+
 	//定义日志transaction中间件
 	r.Use(middleware.JsonLogMiddleware())
 
@@ -57,17 +75,6 @@ func InitRouter(p common.FxCommonParams) *gin.Engine {
 
 	//设置v1版本的接口路由
 	v1.NewRouter(r, p)
-
-	/*//tag 相关接口定义
-	r.GET("/get-tag", p.TagController.GetTag)
-	r.POST("/update-tag", p.TagController.UpdateTag)
-	r.GET("/test-tag", p.TagController.TestTag)
-	r.POST("/create-tag", p.TagController.CreateTag)
-
-	//article 相关接口定义
-	r.GET("/get-article", p.ArticleController.GetArticle)
-	r.POST("/create-article", middleware.DBTransactionMiddleware(p.Db), p.ArticleController.CreateArticle)
-	r.POST("/update-article", p.ArticleController.UpdateArticle)*/
 
 	return r
 }

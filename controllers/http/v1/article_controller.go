@@ -10,10 +10,6 @@ import (
 	"net/http"
 )
 
-/*type ArticleCtlParam struct {
-	BaseCtlParams
-}*/
-
 type ArticleController struct {
 	BaseController
 }

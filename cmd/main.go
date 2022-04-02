@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/xuexiangyou/code-art/infrastructure/container"
+	"github.com/xuexiangyou/code-art/pkg/container"
 	"log"
 	"os"
 	"os/signal"
