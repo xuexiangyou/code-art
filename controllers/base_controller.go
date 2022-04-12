@@ -1,4 +1,4 @@
-package v1
+package controllers
 
 import (
 	"github.com/go-redis/redis/v8"
@@ -34,26 +34,26 @@ func (b BaseController) WithTrxDb(db *gorm.DB) BaseController {
 	return b
 }
 
-func (b BaseController) newTagService() services.TagService {
-	tagStrategy := b.newTagStrategy()
+func (b BaseController) NewTagService() services.TagService {
+	tagStrategy := b.NewTagStrategy()
 	return services.NewTagService(tagStrategy)
 }
 
 
-func (b BaseController) newArticleStrategy() strategy.ArticleStrategy {
+func (b BaseController) NewArticleStrategy() strategy.ArticleStrategy {
 	articleModel := storage.NewArticleModel(b.db)
 	return strategy.NewArticleStrategy(articleModel)
 }
 
-func (b BaseController) newTagStrategy() strategy.TagStrategy {
+func (b BaseController) NewTagStrategy() strategy.TagStrategy {
 	tagModel := storage.NewTagModel(b.db)
 	tagCache := cache.NewTagCache(b.redis)
 	return strategy.NewTagStrategy(tagModel, tagCache)
 }
 
-func (b BaseController) newArticleService() services.ArticleService {
-	articleStrategy := b.newArticleStrategy()
-	tagStrategy := b.newTagStrategy()
+func (b BaseController) NewArticleService() services.ArticleService {
+	articleStrategy := b.NewArticleStrategy()
+	tagStrategy := b.NewTagStrategy()
 	return services.NewArticleService(articleStrategy, tagStrategy)
 }
 

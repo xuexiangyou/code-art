@@ -8,14 +8,14 @@ import (
 )
 
 const (
-	AppEnvDev 	= "dev"
-	AppEnvTest 	= "test"
-	AppEnvPrd   = "prd"
+	AppEnvDev  = "dev"
+	AppEnvTest = "test"
+	AppEnvPrd  = "prd"
 )
 
 type FxCommonParams struct {
 	fx.In
-	Db                *gorm.DB
-	Redis    		  *redis.Client
-	Config            *config.Config
+	Db     *gorm.DB
+	Redis  *redis.Client
+	Config *config.Config
 }

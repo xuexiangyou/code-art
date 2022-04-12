@@ -8,8 +8,10 @@ import (
 	"github.com/xuexiangyou/code-art/common"
 	"github.com/xuexiangyou/code-art/config"
 	v1 "github.com/xuexiangyou/code-art/controllers/http/v1"
+	"github.com/xuexiangyou/code-art/controllers/mq"
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/middleware"
+	"github.com/xuexiangyou/code-art/pkg/pulsar"
 	"log"
 	"time"
 )
@@ -26,7 +28,18 @@ func setGinMode(c *config.Config) {
 	}
 }
 
-func InitRouter(p common.FxCommonParams) *gin.Engine {
+
+func InitQueueRouter(p common.FxCommonParams) *pulsar.PulsarQueues {
+	//初始化
+	routes := mq.NewRouter(p)
+
+	//初始化对象
+	pulsarClient := pulsar.MustNewQueues(p.Config, routes)
+
+	return pulsarClient
+}
+
+func InitGinRouter(p common.FxCommonParams) *gin.Engine {
 	//表单校验
 	forms.Init()
 
@@ -73,7 +86,7 @@ func InitRouter(p common.FxCommonParams) *gin.Engine {
 		}
 	}
 
-	//设置v1版本的接口路由
+	//设置http v1版本的接口路由
 	v1.NewRouter(r, p)
 
 	return r

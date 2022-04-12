@@ -4,18 +4,15 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/sirupsen/logrus"
 	"github.com/xuexiangyou/code-art/common"
+	"github.com/xuexiangyou/code-art/controllers"
 	"github.com/xuexiangyou/code-art/domain/entity"
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/interfaces"
 	"net/http"
 )
 
-type TagCtlParam struct {
-	BaseCtlParams
-}
-
 type TagController struct {
-	BaseController
+	controllers.BaseController
 }
 
 var _ interfaces.TagController = TagController{}
@@ -33,7 +30,7 @@ func newTagRoutes(handler *gin.RouterGroup, f common.FxCommonParams) {
 
 func newTagController(f common.FxCommonParams) TagController {
 	return TagController{
-		BaseController: NewBaseController(f.Db, f.Redis),
+		BaseController: controllers.NewBaseController(f.Db, f.Redis),
 	}
 }
 
@@ -55,7 +52,7 @@ func (t TagController) GetTag(c *gin.Context) {
 		return
 	}
 
-	ret, err := t.newTagService().GetById(getTagParam.Id)
+	ret, err := t.NewTagService().GetById(getTagParam.Id)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, "get tag data invalid")
 		return
@@ -87,7 +84,7 @@ func (t TagController) CreateTag(c *gin.Context) {
 	tagData := &entity.Tag{
 		Name: createTagParam.Name,
 	}
-	tagRet, err := t.newTagService().CreateTag(tagData)
+	tagRet, err := t.NewTagService().CreateTag(tagData)
 	if err != nil {
 		common.WrapContext(c).Error(http.StatusInternalServerError, common.INVALID_PARAMS)
 		return

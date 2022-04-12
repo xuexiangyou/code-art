@@ -3,6 +3,7 @@ package v1
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/xuexiangyou/code-art/common"
+	"github.com/xuexiangyou/code-art/controllers"
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/interfaces"
 	"github.com/xuexiangyou/code-art/middleware"
@@ -11,7 +12,7 @@ import (
 )
 
 type ArticleController struct {
-	BaseController
+	controllers.BaseController
 }
 
 var _ interfaces.ArticleController = ArticleController{}
@@ -28,7 +29,7 @@ func newArticleRoutes(handler *gin.RouterGroup, f common.FxCommonParams) {
 
 func newArticleController(f common.FxCommonParams) ArticleController {
 	return ArticleController{
-		BaseController: NewBaseController(f.Db, f.Redis),
+		BaseController: controllers.NewBaseController(f.Db, f.Redis),
 	}
 }
 
@@ -46,7 +47,7 @@ func (t ArticleController) CreateArticle(c *gin.Context) {
 
 	//获取开启的事物
 	txHandle := c.MustGet("db_trx").(*gorm.DB)
-	articleService := t.WithTrxDb(txHandle).newArticleService()
+	articleService := t.WithTrxDb(txHandle).NewArticleService()
 	articleRet, err := articleService.CreateArticle(createArticleParam)
 	if err != nil {
 		common.WrapContext(c).Error(http.StatusInternalServerError, common.INVALID_PARAMS, err.Error())
@@ -64,7 +65,7 @@ func (t ArticleController) UpdateArticle(c *gin.Context) {
 		return
 	}
 
-	articleService := t.newArticleService()
+	articleService := t.NewArticleService()
 	err = articleService.UpdateArticle(updateArticleParam)
 	if err != nil {
 		common.WrapContext(c).Error(http.StatusInternalServerError, common.INVALID_PARAMS, err.Error())

@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/xuexiangyou/code-art/config"
+	"github.com/xuexiangyou/code-art/pkg/pulsar"
 	"github.com/xuexiangyou/code-art/pkg/setting"
 	"github.com/xuexiangyou/code-art/pkg/stores"
 	"github.com/xuexiangyou/code-art/routers"
@@ -25,12 +26,15 @@ func fxProvideRedis() fx.Option {
 }
 
 func fxProvideRouter() fx.Option {
-	return fx.Provide(routers.InitRouter)
+	return fx.Provide(
+		routers.InitGinRouter, //添加http接口路由
+		routers.InitQueueRouter,
+	)
 }
 
 //fxRegister 启动服务
 func fxRegister() fx.Option {
-	return fx.Invoke(func(lc fx.Lifecycle, config *config.Config, r *gin.Engine) {
+	return fx.Invoke(func(lc fx.Lifecycle, config *config.Config, r *gin.Engine, pulsar *pulsar.PulsarQueues) {
 		srv := &http.Server{
 			Addr:    fmt.Sprintf("%s:%d", config.Host, config.Port),
 			Handler: r,
@@ -39,9 +43,12 @@ func fxRegister() fx.Option {
 		lc.Append(fx.Hook{
 			OnStart: func(ctx context.Context) error {
 				go srv.ListenAndServe()
+				go pulsar.Start() //队列消费服务启动
+
 				return nil
 			},
 			OnStop: func(ctx context.Context) error {
+				pulsar.Stop() //队列退出
 				return srv.Shutdown(ctx)
 			},
 		})
