@@ -14,6 +14,7 @@ type Config struct {
 	}
 
 	PulsarConfig struct {
+		ColonyId		  string
 		EndPoint          string //pulsar 队列接入地址
 		Token             string //pulsar 接入token
 		OperationTimeout  int    `json:",default=30"` //操作超时时间

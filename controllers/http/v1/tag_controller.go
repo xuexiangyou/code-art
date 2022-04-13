@@ -8,11 +8,13 @@ import (
 	"github.com/xuexiangyou/code-art/domain/entity"
 	"github.com/xuexiangyou/code-art/forms"
 	"github.com/xuexiangyou/code-art/interfaces"
+	"github.com/xuexiangyou/code-art/pkg/pulsar"
 	"net/http"
 )
 
 type TagController struct {
 	controllers.BaseController
+	pulsar *pulsar.TencentPulsarClient
 }
 
 var _ interfaces.TagController = TagController{}
@@ -23,6 +25,7 @@ func newTagRoutes(handler *gin.RouterGroup, f common.FxCommonParams) {
 	{
 		h.GET("/get", r.GetTag)
 		h.GET("/test", r.TestTag)
+		h.GET("/test-pulsar", r.TestPulsar)
 		h.POST("/create", r.CreateTag)
 		h.POST("/update", r.UpdateTag)
 	}
@@ -30,8 +33,14 @@ func newTagRoutes(handler *gin.RouterGroup, f common.FxCommonParams) {
 
 func newTagController(f common.FxCommonParams) TagController {
 	return TagController{
-		BaseController: controllers.NewBaseController(f.Db, f.Redis),
+		BaseController: controllers.NewBaseController(f.Config, f.Db, f.Redis),
+		pulsar: f.Pulsar,
 	}
+}
+
+func (t TagController) TestPulsar(c *gin.Context) {
+	t.pulsar.PulsarProducer("/retailtrade/TEST_QUEUE", "ccccccccc", 0)
+	common.WrapContext(c).Success("3333")
 }
 
 func (t TagController) TestTag(c *gin.Context) {

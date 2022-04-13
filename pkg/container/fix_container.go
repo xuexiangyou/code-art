@@ -25,6 +25,10 @@ func fxProvideRedis() fx.Option {
 	return fx.Provide(stores.ConnectRedis)
 }
 
+func fxProvidePulsar() fx.Option {
+	return fx.Provide(pulsar.NewTencentPulsarClient)
+}
+
 func fxProvideRouter() fx.Option {
 	return fx.Provide(
 		routers.InitGinRouter, //添加http接口路由
@@ -60,6 +64,7 @@ func NewApp() *fx.App {
 		fxProvideConfig(),     //配置文件
 		fxProvideDb(),         //数据库文件
 		fxProvideRedis(),      //redis文件
+		fxProvidePulsar(),     //pulsar文件链接
 		fxProvideRouter(),     //路由文件
 		fxRegister(),          //http 服务启动
 	)

@@ -29,7 +29,7 @@ func newArticleRoutes(handler *gin.RouterGroup, f common.FxCommonParams) {
 
 func newArticleController(f common.FxCommonParams) ArticleController {
 	return ArticleController{
-		BaseController: controllers.NewBaseController(f.Db, f.Redis),
+		BaseController: controllers.NewBaseController(f.Config, f.Db, f.Redis),
 	}
 }
 

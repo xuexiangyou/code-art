@@ -13,7 +13,7 @@ type TagController struct {
 }
 
 func NewTagController(routes map[string]pulsar.CallHandler, f common.FxCommonParams) {
-	t := TagController{BaseController: controllers.NewBaseController(f.Db, f.Redis)}
+	t := TagController{BaseController: controllers.NewBaseController(f.Config, f.Db, f.Redis)}
 	{
 		routes["getTag"] = t.getTag()
 		routes["getTagList"] = t.getTagList()
